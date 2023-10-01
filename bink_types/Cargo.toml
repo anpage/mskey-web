@@ -1,0 +1,9 @@
+[package]
+name = "bink_types"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num-bigint = {version = "0.4.3", features = ["serde"] }
+num-traits = "0.2.15"
+serde = { version = "1.0.164", features = ["derive"] }

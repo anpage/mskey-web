@@ -1,0 +1,39 @@
+[package]
+name = "mskey-web"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = ["bink_types"]
+
+[dependencies]
+anyhow = "1.0.71"
+bincode = "1.3.3"
+bink_types = { path = "bink_types" }
+getrandom = { version = "0.2.10", features = ["js"] }
+leptos = { version = "0.5.0", features = ["csr"] }
+umskt = { git = "https://github.com/anpage/umskt-rs.git" }
+wasm-bindgen = "0.2.87"
+wasm-bindgen-futures = "0.4.37"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  'Clipboard',
+  'History',
+  'Location',
+  'Navigator',
+  'Url',
+  'UrlSearchParams',
+  'Window',
+]
+
+[build-dependencies]
+bincode = "1.3.3"
+bink_types = { path = "bink_types" }
+num-bigint = {version = "0.4.3", features = ["serde"] }
+num-traits = "0.2.15"
+serde_json = "1.0.99"
+
+[profile.release]
+strip = true
