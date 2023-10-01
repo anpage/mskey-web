@@ -14,3 +14,10 @@ serve:
 
 deploy: clean build
     surge .\dist\ https://mskt.surge.sh
+
+tauri-build: clean
+    trunk build --release
+
+tauri-serve:
+    trunk serve --release
+

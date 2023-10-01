@@ -4,3 +4,4 @@
 keys.json
 bink.bin
 /style
+**/node_modules
