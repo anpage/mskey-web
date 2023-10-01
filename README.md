@@ -24,3 +24,15 @@ If you want to just use the app locally on your own machine, you can start a sim
 ```
 just serve
 ```
+
+## Building Tauri app
+A Tauri wrapper is included, which allows the app to be run in its own window as a "desktop" program. You can run it in development mode with the following commands:
+
+(Node and npm are required)
+1. `npm install`
+2. `npm run tauri dev`
+
+You can build an installer package with:
+```
+npm run tauri build
+```
