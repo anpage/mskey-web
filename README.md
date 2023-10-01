@@ -12,7 +12,7 @@ The HTML is messy at the moment and does weird things on mobile. I'm working on 
 * Trunk: `cargo install trunk`
 * (Optional) [just](https://github.com/casey/just)
 
-If you don't want to install just, you can see the equivalent commands inside the `justile`.
+If you don't want to install just, you can see the equivalent commands inside the `justfile`.
 
 ## Build Steps
 1. Place `keys.json` in the project root
