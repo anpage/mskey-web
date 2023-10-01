@@ -1,13 +1,13 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "beforeBuildCommand": "just tauri-build",
-    "beforeDevCommand": "just tauri-serve",
+    "beforeBuildCommand": "trunk build --release",
+    "beforeDevCommand": "trunk serve --release",
     "devPath": "http://127.0.0.1:8080",
     "distDir": "../dist"
   },
   "package": {
-    "productName": "mskey-web",
+    "productName": "MS Key Tool",
     "version": "0.1.0"
   },
   "tauri": {
@@ -24,9 +24,6 @@
       "externalBin": [],
       "icon": [
         "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
         "icons/icon.ico"
       ],
       "identifier": "sh.surge.mskt",
@@ -58,7 +55,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "MSKT",
+        "title": "MS Key Tool",
         "width": 800
       }
     ]

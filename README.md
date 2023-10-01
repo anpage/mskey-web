@@ -26,13 +26,14 @@ just serve
 ```
 
 ## Building Tauri app
-A Tauri wrapper is included, which allows the app to be run in its own window as a "desktop" program. You can run it in development mode with the following commands:
+A Tauri wrapper is included, which allows the app to be run in its own window as a "desktop" program. You can run it in development mode with the following command:
 
 (Node and npm are required)
-1. `npm install`
-2. `npm run tauri dev`
+```
+just tauri-serve
+```
 
 You can build an installer package with:
 ```
-npm run tauri build
+just tauri-build
 ```

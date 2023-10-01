@@ -15,9 +15,11 @@ serve:
 deploy: clean build
     surge .\dist\ https://mskt.surge.sh
 
-tauri-build: clean
-    trunk build --release
+npm-install:
+    npm install
 
-tauri-serve:
-    trunk serve --release
+tauri-build: npm-install
+    npm run tauri build
 
+tauri-serve: npm-install
+    npm run tauri dev
