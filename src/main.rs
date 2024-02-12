@@ -8,17 +8,56 @@ use crate::pages::{activate::Activate, generate::Generate, validate::Validate};
 
 mod components;
 mod gen;
+mod icons;
 mod pages;
 
 fn main() {
     mount_to_body(|| view! { <App /> })
 }
 
-#[derive(Debug, Clone, Copy)]
-enum SelectedTab {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Tab {
     Generate,
     Validate,
     Activate,
+}
+
+impl Tab {
+    pub fn class(tab: Tab, selected: Tab) -> String {
+        let class = if tab == selected {
+            "inline-block w-full p-3 text-gray-900 bg-gray-100 active focus:outline-none dark:bg-slate-700 dark:text-white"
+        } else {
+            "inline-block w-full p-3 bg-gray-50 hover:text-gray-700 hover:bg-gray-50 focus:outline-none dark:hover:text-white dark:bg-slate-900 dark:hover:bg-slate-700"
+        };
+        match tab {
+            Tab::Generate => format!("{} rounded-t-lg sm:rounded-none sm:rounded-s-lg", class),
+            Tab::Validate => class.to_string(),
+            Tab::Activate => format!("{} rounded-b-lg sm:rounded-none sm:rounded-e-lg", class),
+        }
+    }
+}
+
+impl ToString for Tab {
+    fn to_string(&self) -> String {
+        match self {
+            Tab::Generate => "generate",
+            Tab::Validate => "validate",
+            Tab::Activate => "activate",
+        }
+        .to_string()
+    }
+}
+
+impl From<UrlSearchParams> for Tab {
+    fn from(search: UrlSearchParams) -> Self {
+        if search.get("activate").is_some() {
+            Tab::Activate
+        } else if search.get("validate").is_some() {
+            Tab::Validate
+        } else {
+            Tab::Generate
+        }
+    }
 }
 
 #[component]
@@ -28,28 +67,17 @@ fn App() -> impl IntoView {
 
     let search = web_sys::window().unwrap().location().search().unwrap();
     let search = UrlSearchParams::new_with_str(&search).unwrap();
-    let tab = if search.get("activate").is_some() {
-        SelectedTab::Activate
-    } else if search.get("validate").is_some() {
-        SelectedTab::Validate
-    } else {
-        SelectedTab::Generate
-    };
+    let tab: Tab = search.into();
 
     let (selected_tab, set_selected_tab) = create_signal(tab);
-    let is_generate_active = move || matches!(selected_tab.get(), SelectedTab::Generate);
-    let is_validate_active = move || matches!(selected_tab.get(), SelectedTab::Validate);
-    let is_activate_active = move || matches!(selected_tab.get(), SelectedTab::Activate);
 
-    let update_selected_tab = move |tab| {
-        let tab_name = match tab {
-            SelectedTab::Generate => "generate",
-            SelectedTab::Validate => "validate",
-            SelectedTab::Activate => "activate",
-        };
+    let select_tab = move |tab: Tab| {
+        if selected_tab.get() == tab {
+            return;
+        }
         let url = web_sys::window().unwrap().location().href().unwrap();
         let url = Url::new(&url).unwrap();
-        url.set_search(&format!("?{}", tab_name));
+        url.set_search(&format!("?{}", tab.to_string()));
         let url = url.href();
         let _ = web_sys::window()
             .unwrap()
@@ -60,55 +88,38 @@ fn App() -> impl IntoView {
     };
 
     view! {
-        <div class="section">
-            <div class="columns is-centered">
-                <div class="column is-narrow is-full-tablet is-8-desktop is-6-widescreen is-5-fullhd">
-                    <div class="columns is-mobile is-centered">
-                        <div class="column is-narrow">
-                            <div class="tabs is-toggle is-toggle-rounded">
-                                <ul>
-                                    <li class={move || if is_generate_active() {"is-active"} else {""} }>
-                                        <a on:click=move |_| {
-                                            if is_generate_active() {
-                                                return;
-                                            }
-                                            update_selected_tab(SelectedTab::Generate);
-                                        }>
-                                            "Generate"
-                                        </a>
-                                    </li>
-                                    <li class={move || if is_validate_active() {"is-active"} else {""} }>
-                                        <a on:click=move |_| {
-                                            if is_validate_active() {
-                                                return;
-                                            }
-                                            update_selected_tab(SelectedTab::Validate);
-                                        }>
-                                            "Validate"
-                                        </a>
-                                    </li>
-                                    <li class={move || if is_activate_active() {"is-active"} else {""} }>
-                                        <a on:click=move |_| {
-                                            if is_activate_active() {
-                                                return;
-                                            }
-                                            update_selected_tab(SelectedTab::Activate);
-                                        }>
-                                            "Activate"
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    {move || {
-                        match selected_tab.get() {
-                            SelectedTab::Generate => view! {  <div><Generate keygen=keygen.clone() /></div> },
-                            SelectedTab::Validate => view! {  <div><Validate keygen=keygen.clone() /></div> },
-                            SelectedTab::Activate => view! {  <div><Activate /></div> },
-                        }
-                    }}
-                </div>
+        <div class="max-w-screen-md mx-auto sm:my-8 px-8 pt-6 pb-8 bg-white dark:bg-slate-800 sm:shadow-xl rounded">
+            <ul class="max-w-md mx-auto mb-8 font-medium text-center text-gray-500 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400">
+                <li class="w-full">
+                    <a href="" on:click=move |_| {
+                        select_tab(Tab::Generate);
+                    } class={move || Tab::class(Tab::Generate, selected_tab.get())}>
+                        "Generate"
+                    </a>
+                </li>
+                <li class="w-full">
+                    <a href="" on:click=move |_| {
+                        select_tab(Tab::Validate);
+                    } class={move || Tab::class(Tab::Validate, selected_tab.get())}>
+                        "Validate"
+                    </a>
+                </li>
+                <li class="w-full">
+                    <a href="" on:click=move |_| {
+                        select_tab(Tab::Activate);
+                    } class={move || Tab::class(Tab::Activate, selected_tab.get())}>
+                        "Activate"
+                    </a>
+                </li>
+            </ul>
+            <div class="dark:text-white">
+                {move || {
+                    match selected_tab.get() {
+                        Tab::Generate => view! { <Generate keygen=keygen.clone() /> },
+                        Tab::Validate => view! { <Validate keygen=keygen.clone() /> },
+                        Tab::Activate => view! { <Activate /> },
+                    }
+                }}
             </div>
         </div>
     }
