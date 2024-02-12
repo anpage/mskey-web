@@ -10,6 +10,7 @@ The HTML is messy at the moment and does weird things on mobile. I'm working on 
 ## Development Requirements
 * [The Rust toolchain](https://rustup.rs/)
 * Trunk: `cargo install trunk`
+* [Tailwind CLI](https://github.com/tailwindlabs/tailwindcss/releases) (available as `tailwindcss` on your PATH)
 * (Optional) [just](https://github.com/casey/just)
 
 If you don't want to install just, you can see the equivalent commands inside the `justfile`.
