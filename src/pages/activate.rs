@@ -1,6 +1,13 @@
 use leptos::*;
 
-use crate::gen::KeyGen;
+use crate::{
+    components::{
+        button::Button,
+        fields::{Label, TextField},
+    },
+    gen::KeyGen,
+    icons::CopyIcon,
+};
 
 #[cfg(web_sys_unstable_apis)]
 #[component]
@@ -36,45 +43,29 @@ pub fn Activate() -> impl IntoView {
     });
 
     view! {
-        <div class="block">
-            <div class="field">
-                <label class="label" for="installationid">"Installation ID"</label>
-                <div class="control">
-                    <input
-                        class="input"
-                        type="text"
-                        name="installationid"
-                        id="installationid"
-                        on:input=update_installation_id
-                    >
-                    </input>
-                </div>
-            </div>
+        <div class="mb-4">
+            <TextField
+                label="Installation ID"
+                id="installationid"
+                on_change=|_| {}
+                on_input=update_installation_id
+                value=installation_id
+            />
         </div>
-        <label class="label" for="confirmationid">"Confirmation ID"</label>
-        <div class="block notification is-warning">
-            <div class="columns is-mobile is-centered">
-                <div class="column is-narrow">
-                    <div class="content">
-                        <code class="title is-4 is-size-7-mobile is-size-6-tablet is-size-5-desktop">
-                            {confirmation_id}
-                        </code>
-                    </div>
-                </div>
-            </div>
+        <Label>"Confirmation ID"</Label>
+        <div class="overflow-scroll mb-8 mx-auto font-mono text-center text-2xl text-slate-800 rounded-lg p-6 bg-slate-200 dark:bg-slate-700 dark:text-slate-200">
+                {confirmation_id}
         </div>
-        <p class="buttons block">
-            <button
-                class="button is-primary is-medium"
-                on:click=move |_| {
-                    copy_confirmation_id_action.dispatch(confirmation_id.get());
-                }
-            >
-                <span class="icon">
-                    <i class="fas fa-clipboard"></i>
-                </span>
-                <span>"Copy"</span>
-            </button>
-        </p>
+        <Button
+            class="text-slate-100 bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+            on_click=move |_| {
+                copy_confirmation_id_action.dispatch(confirmation_id.get());
+            }
+        >
+            <span class="mr-2">
+                <CopyIcon />
+            </span>
+            <span>"Copy"</span>
+        </Button>
     }
 }

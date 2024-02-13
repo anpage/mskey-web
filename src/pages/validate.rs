@@ -68,6 +68,7 @@ pub fn Validate(keygen: Rc<KeyGen>) -> impl IntoView {
                 label="Product Key"
                 id="productkey"
                 on_change=update_product_key
+                on_input=|_| {}
                 value=product_key
             />
         </div>

@@ -67,14 +67,16 @@ where
 }
 
 #[component]
-pub fn TextField<F>(
+pub fn TextField<F, G>(
     label: &'static str,
     id: &'static str,
     on_change: F,
+    on_input: G,
     value: ReadSignal<String>,
 ) -> impl IntoView
 where
     F: Fn(Event) + 'static,
+    G: Fn(Event) + 'static,
 {
     view! {
         <Label for_id=id>{label}</Label>
@@ -84,6 +86,7 @@ where
             id=id
             class=INPUT_CLASSES
             on:change=on_change
+            on:input=on_input
             prop:value=value.get()
         />
     }
