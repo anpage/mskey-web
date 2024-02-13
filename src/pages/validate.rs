@@ -5,7 +5,10 @@ use wasm_bindgen::JsValue;
 use web_sys::{Url, UrlSearchParams};
 
 use crate::{
-    components::{bink1998_details::Bink1998Details, bink2002_details::Bink2002Details},
+    components::{
+        bink1998_details::Bink1998Details, bink2002_details::Bink2002Details, error::Error,
+        fields::TextField,
+    },
     gen::{KeyGen, ProductKey},
 };
 
@@ -60,49 +63,36 @@ pub fn Validate(keygen: Rc<KeyGen>) -> impl IntoView {
     });
 
     view! {
-        <div class="block">
-            <div class="field">
-                <label class="label" for="productkey">"Product Key"</label>
-                <div class="control">
-                    <input
-                        class="input"
-                        type="text"
-                        name="productkey"
-                        id="productkey"
-                        value={product_key.get()}
-                        on:change=update_product_key
-                    >
-                    </input>
-                </div>
-            </div>
+        <div class="mb-4">
+            <TextField
+                label="Product Key"
+                id="productkey"
+                on_change=update_product_key
+                value=product_key
+            />
         </div>
         {move || {
             if product_key.get().is_empty() {
                 view! {
-                    <div class="notification">
-                        "Enter a product key to validate"
+                    <div>
                     </div>
                 }
             } else {
                 match validated_key.get() {
                     ProductKey::Invalid => view! {
-                        <div class="notification is-danger">
-                            "Invalid product key"
+                        <div class="mt-6">
+                            <Error>
+                                "Invalid product key"
+                            </Error>
                         </div>
                     },
                     ProductKey::Bink1998{ key, bink_ids } => view! {
                         <div>
-                            <div class="notification is-primary">
-                                "Valid product key"
-                            </div>
                             <Bink1998Details key=key bink_ids=bink_ids />
                         </div>
                     },
                     ProductKey::Bink2002{ key, bink_ids } => view! {
                         <div>
-                            <div class="notification is-primary">
-                                "Valid product key"
-                            </div>
                             <Bink2002Details key=key bink_ids=bink_ids />
                         </div>
                     }

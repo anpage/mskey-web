@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use leptos::*;
 use umskt::pidgen3::bink1998::ProductKey;
 
+use crate::components::fields::Label;
+
 #[component]
 pub fn Bink1998Details(key: ProductKey, bink_ids: HashMap<String, u8>) -> impl IntoView {
     let bink_id_list = {
@@ -18,41 +20,43 @@ pub fn Bink1998Details(key: ProductKey, bink_ids: HashMap<String, u8>) -> impl I
         bink_id_list
     };
     view! {
-        <label class="label">"Products"</label>
-        <div class="content">
-            <ul>
+        <div class="mb-4">
+            <Label>"Products"</Label>
+            <ul class="list-disc list-inside">
                 {bink_id_list}
             </ul>
         </div>
-        <label class="label">"Details"</label>
-        <table class="table is-striped is-fullwidth">
-            <tbody>
-                <tr>
-                    <td class="has-text-weight-semibold">"Upgrade"</td>
-                    <td>{key.upgrade()}</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="has-text-weight-semibold">"Channel ID"</td>
-                    <td>{key.channel_id()}</td>
-                    <td>{format!("0x{:X}", key.channel_id())}</td>
-                </tr>
-                <tr>
-                    <td class="has-text-weight-semibold">"Sequence"</td>
-                    <td>{key.sequence()}</td>
-                    <td>{format!("0x{:X}", key.sequence())}</td>
-                </tr>
-                <tr>
-                    <td class="has-text-weight-semibold">"Hash"</td>
-                    <td>{key.hash()}</td>
-                    <td>{format!("0x{:X}", key.hash())}</td>
-                </tr>
-                <tr>
-                    <td class="has-text-weight-semibold">"Signature"</td>
-                    <td>{key.signature()}</td>
-                    <td>{format!("0x{:X}", key.signature())}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="mb-4">
+            <Label>"Details"</Label>
+            <table class="w-full text-left">
+                <tbody>
+                    <tr>
+                        <th class="font-semibold px-4 py-2">"Upgrade"</th>
+                        <td class="font-mono px-4 py-2">{key.upgrade()}</td>
+                        <td></td>
+                    </tr>
+                    <tr class="bg-gray-100 dark:bg-slate-700">
+                        <th class="font-semibold px-4 py-2">"Channel ID"</th>
+                        <td class="font-mono px-4 py-2">{key.channel_id()}</td>
+                        <td class="font-mono px-4 py-2">{format!("0x{:X}", key.channel_id())}</td>
+                    </tr>
+                    <tr>
+                        <th class="font-semibold px-4 py-2">"Sequence"</th>
+                        <td class="font-mono px-4 py-2">{key.sequence()}</td>
+                        <td class="font-mono px-4 py-2">{format!("0x{:X}", key.sequence())}</td>
+                    </tr>
+                    <tr class="bg-gray-100 dark:bg-slate-700">
+                        <th class="font-semibold px-4 py-2">"Hash"</th>
+                        <td class="font-mono px-4 py-2">{key.hash()}</td>
+                        <td class="font-mono px-4 py-2">{format!("0x{:X}", key.hash())}</td>
+                    </tr>
+                    <tr>
+                        <th class="font-semibold px-4 py-2">"Signature"</th>
+                        <td class="font-mono px-4 py-2">{key.signature()}</td>
+                        <td class="font-mono px-4 py-2">{format!("0x{:X}", key.signature())}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     }
 }

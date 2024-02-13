@@ -1,9 +1,20 @@
 use leptos::*;
 use web_sys::Event;
 
-const LABEL_CLASSES: &str = "block font-bold mb-2 text-gray-800 dark:text-slate-200";
 const INPUT_CLASSES: &str =
-    "block appearance-none w-full px-3 py-2 mr-8 rounded-lg smadow-sm bg-gray-100 text-gray-800 h-10 dark:text-slate-200 dark:bg-slate-900";
+    "block appearance-none w-full px-3 py-2 mr-8 rounded-lg smadow-sm bg-gray-100 h-10 dark:bg-slate-900";
+
+#[component]
+pub fn Label(#[prop(optional)] for_id: &'static str, children: Children) -> impl IntoView {
+    view! {
+        <label
+            class="block font-bold mb-2 text-lg"
+            for=for_id
+        >
+            {children()}
+        </label>
+    }
+}
 
 #[component]
 pub fn SelectField<F>(
@@ -16,11 +27,11 @@ where
     F: Fn(Event) + 'static,
 {
     view! {
-        <label class=LABEL_CLASSES for=id>{label}</label>
+        <Label for_id=id>{label}</Label>
         <select
             name=id
             id=id
-            class=INPUT_CLASSES
+            class=format!("{INPUT_CLASSES} cursor-pointer")
             on:input=on_input
         >
             {children()}
@@ -41,7 +52,7 @@ where
     F: Fn(Event) + 'static,
 {
     view! {
-        <label class=LABEL_CLASSES for=id>{label}</label>
+        <Label for_id=id>{label}</Label>
         <input
             type="number"
             min=format!("{min}")
@@ -51,7 +62,29 @@ where
             class=format!("{INPUT_CLASSES} no-spinner")
             on:change=on_change
             prop:value=channel_id.get()
-        >
-        </input>
+        />
+    }
+}
+
+#[component]
+pub fn TextField<F>(
+    label: &'static str,
+    id: &'static str,
+    on_change: F,
+    value: ReadSignal<String>,
+) -> impl IntoView
+where
+    F: Fn(Event) + 'static,
+{
+    view! {
+        <Label for_id=id>{label}</Label>
+        <input
+            type="text"
+            name=id
+            id=id
+            class=INPUT_CLASSES
+            on:change=on_change
+            prop:value=value.get()
+        />
     }
 }

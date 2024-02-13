@@ -3,12 +3,14 @@ use std::rc::Rc;
 use leptos::*;
 use wasm_bindgen_futures::JsFuture;
 
-use crate::components::{
-    button::Button,
-    fields::{NumberField, SelectField},
+use crate::{
+    components::{
+        button::Button,
+        fields::{NumberField, SelectField},
+    },
+    gen::KeyGen,
+    icons::{CopyIcon, RefreshIcon},
 };
-use crate::gen::KeyGen;
-use crate::icons::{CopyIcon, RefreshIcon};
 
 #[cfg(web_sys_unstable_apis)]
 #[component]
@@ -111,7 +113,7 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
         </div>
         <div class="flex flex-row gap-4">
             <Button
-                class="bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+                class="text-gray-100 bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
                 on_click=move |_| {
                     copy_key_action.dispatch(key.get());
                 }
@@ -122,7 +124,7 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                 <span>"Copy"</span>
             </Button>
             <Button
-                class="bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"
+                class="text-gray-100 bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"
                 on_click=move |_| {
                     set_bink_id.update(|_| ());
                 }

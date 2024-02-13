@@ -112,7 +112,7 @@ fn App() -> impl IntoView {
                     </a>
                 </li>
             </ul>
-            <div class="dark:text-white">
+            <div class="text-gray-800 dark:text-slate-200">
                 {move || {
                     match selected_tab.get() {
                         Tab::Generate => view! { <Generate keygen=keygen.clone() /> },
