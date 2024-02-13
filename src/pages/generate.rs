@@ -3,6 +3,10 @@ use std::rc::Rc;
 use leptos::*;
 use wasm_bindgen_futures::JsFuture;
 
+use crate::components::{
+    button::Button,
+    fields::{NumberField, SelectField},
+};
 use crate::gen::KeyGen;
 use crate::icons::{CopyIcon, RefreshIcon};
 
@@ -60,66 +64,55 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
         }
     });
 
-    let label_classes = "block font-bold mb-2 text-gray-800 dark:text-slate-200";
-    let input_classes =
-        "block appearance-none w-full px-3 py-2 mr-8 rounded-lg smadow-sm bg-gray-100 text-gray-800 h-10 dark:text-slate-200 dark:bg-slate-900";
-
-    let keygen_view_clone = keygen.clone();
+    let keygen_view_clone_1 = keygen.clone();
+    let keygen_view_clone_2 = keygen.clone();
     view! {
         <div class="mb-4">
-            <label class=label_classes for="products">"Product"</label>
-            <select
-                name="products"
-                id="products"
-                class=input_classes
-                on:input=update_product
+            <SelectField
+                label="Product"
+                id="product"
+                on_input=update_product
             >
-                {keygen_view_clone.sorted_products().iter().map(|p| {
+                {keygen_view_clone_1.sorted_products().iter().map(|p| {
                     view! {
                         <option value={p.name.clone()} selected={p.name == product.get()}>{p.name.clone()}</option>
                     }
                 }).collect::<Vec<_>>()}
-            </select>
+            </SelectField>
         </div>
         <div class="flex flex-col sm:flex-row gap-4 mb-6">
             <div class="flex-1">
-                <label class=label_classes for="bink">"BINK ID"</label>
-                <select
-                    name="bink"
+                <SelectField
+                    label="BINK ID"
                     id="bink"
-                    class=input_classes
-                    on:input=update_bink_id
+                    on_input=update_bink_id
                 >
-                    {move || keygen_view_clone.sorted_products().iter().find(|p| p.name == product.get()).unwrap().bink_ids.iter().map(|b| {
+                    {move || keygen_view_clone_2.sorted_products().iter().find(|p| p.name == product.get()).unwrap().bink_ids.iter().map(|b| {
                         let b_str = format!("{:02X}", b);
                         view! {
                             <option value={b_str.clone()} selected={*b == bink_id.get()}>{b_str}</option>
                         }
                     }).collect::<Vec<_>>()}
-                </select>
+                </SelectField>
             </div>
             <div class="flex-1">
-                <label class=label_classes for="channel">"Channel ID"</label>
-                <input
-                    type="number"
-                    min="0"
-                    max="999"
-                    name="channel"
+                <NumberField
+                    label="Channel ID"
                     id="channel"
-                    class=format!("{input_classes} no-spinner")
-                    on:change=update_channel_id
-                    prop:value=channel_id.get()
-                >
-                </input>
+                    min=0
+                    max=999
+                    channel_id=channel_id
+                    on_change=update_channel_id
+                />
             </div>
         </div>
         <div class="mb-8 mx-auto font-mono text-center text-xl text-gray-800 rounded-lg p-6 bg-gray-200 dark:bg-slate-700 dark:text-slate-200">
             {key}
         </div>
         <div class="flex flex-row gap-4">
-            <button
-                class="shadow-sm dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg px-4 py-2"
-                on:click=move |_| {
+            <Button
+                class="bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+                on_click=move |_| {
                     copy_key_action.dispatch(key.get());
                 }
             >
@@ -127,10 +120,10 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                     <CopyIcon />
                 </span>
                 <span>"Copy"</span>
-            </button>
-            <button
-                class="shadow-sm dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:text-white bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-4 py-2"
-                on:click=move |_| {
+            </Button>
+            <Button
+                class="bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"
+                on_click=move |_| {
                     set_bink_id.update(|_| ());
                 }
             >
@@ -138,7 +131,7 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                     <RefreshIcon />
                 </span>
                 <span>"Regenerate"</span>
-            </button>
+            </Button>
         </div>
     }
 }
