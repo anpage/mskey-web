@@ -25,9 +25,9 @@ enum Tab {
 impl Tab {
     pub fn class(tab: Tab, selected: Tab) -> String {
         let class = if tab == selected {
-            "inline-block w-full p-3 text-gray-900 bg-gray-100 active focus:outline-none dark:bg-slate-700 dark:text-white"
+            "inline-block w-full p-3 text-slate-900 bg-slate-200 active focus:outline-none dark:bg-slate-700 dark:text-white"
         } else {
-            "inline-block w-full p-3 bg-gray-50 hover:text-gray-700 hover:bg-gray-50 focus:outline-none dark:hover:text-white dark:bg-slate-900 dark:hover:bg-slate-700"
+            "inline-block w-full p-3 bg-slate-50 hover:text-slate-700 hover:bg-slate-100 focus:outline-none dark:hover:text-white dark:bg-slate-900 dark:hover:bg-slate-700"
         };
         match tab {
             Tab::Generate => format!("{} rounded-t-lg sm:rounded-none sm:rounded-s-lg", class),
@@ -88,8 +88,8 @@ fn App() -> impl IntoView {
     };
 
     view! {
-        <div class="max-w-screen-md mx-auto sm:my-8 px-8 pt-6 pb-8 bg-white dark:bg-slate-800 sm:shadow-xl rounded">
-            <ul class="max-w-md mx-auto mb-8 font-medium text-center text-gray-500 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400">
+        <div class="max-w-screen-md mx-auto sm:my-8 px-8 pt-6 pb-8 bg-slate-50 dark:bg-slate-800 sm:shadow-xl rounded">
+            <ul class="max-w-md mx-auto mb-8 font-medium text-center text-slate-500 rounded-lg shadow sm:flex dark:divide-slate-700 dark:text-slate-400">
                 <li class="w-full">
                     <a href="" on:click=move |_| {
                         select_tab(Tab::Generate);
@@ -112,7 +112,7 @@ fn App() -> impl IntoView {
                     </a>
                 </li>
             </ul>
-            <div class="text-gray-800 dark:text-slate-200">
+            <div class="text-slate-800 dark:text-slate-200">
                 {move || {
                     match selected_tab.get() {
                         Tab::Generate => view! { <Generate keygen=keygen.clone() /> },

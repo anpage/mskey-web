@@ -2,7 +2,7 @@ use leptos::*;
 use web_sys::Event;
 
 const INPUT_CLASSES: &str =
-    "block appearance-none w-full px-3 py-2 mr-8 rounded-lg smadow-sm bg-gray-100 h-10 dark:bg-slate-900";
+    "block appearance-none w-full px-3 py-2 mr-8 rounded-lg smadow-sm bg-slate-100 h-10 dark:bg-slate-900";
 
 #[component]
 pub fn Label(#[prop(optional)] for_id: &'static str, children: Children) -> impl IntoView {

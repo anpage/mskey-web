@@ -35,7 +35,7 @@ pub fn Bink1998Details(key: ProductKey, bink_ids: HashMap<String, u8>) -> impl I
                         <td class="font-mono px-4 py-2">{key.upgrade()}</td>
                         <td></td>
                     </tr>
-                    <tr class="bg-gray-100 dark:bg-slate-700">
+                    <tr class="bg-slate-100 dark:bg-slate-700">
                         <th class="font-semibold px-4 py-2">"Channel ID"</th>
                         <td class="font-mono px-4 py-2">{key.channel_id()}</td>
                         <td class="font-mono px-4 py-2">{format!("0x{:X}", key.channel_id())}</td>
@@ -45,7 +45,7 @@ pub fn Bink1998Details(key: ProductKey, bink_ids: HashMap<String, u8>) -> impl I
                         <td class="font-mono px-4 py-2">{key.sequence()}</td>
                         <td class="font-mono px-4 py-2">{format!("0x{:X}", key.sequence())}</td>
                     </tr>
-                    <tr class="bg-gray-100 dark:bg-slate-700">
+                    <tr class="bg-slate-100 dark:bg-slate-700">
                         <th class="font-semibold px-4 py-2">"Hash"</th>
                         <td class="font-mono px-4 py-2">{key.hash()}</td>
                         <td class="font-mono px-4 py-2">{format!("0x{:X}", key.hash())}</td>

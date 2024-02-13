@@ -108,12 +108,12 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                 />
             </div>
         </div>
-        <div class="mb-8 mx-auto font-mono text-center text-xl text-gray-800 rounded-lg p-6 bg-gray-200 dark:bg-slate-700 dark:text-slate-200">
+        <div class="mb-8 mx-auto font-mono text-center text-2xl text-slate-800 rounded-lg p-6 bg-slate-200 dark:bg-slate-700 dark:text-slate-200">
             {key}
         </div>
         <div class="flex flex-row gap-4">
             <Button
-                class="text-gray-100 bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+                class="text-slate-100 bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
                 on_click=move |_| {
                     copy_key_action.dispatch(key.get());
                 }
@@ -124,7 +124,7 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                 <span>"Copy"</span>
             </Button>
             <Button
-                class="text-gray-100 bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"
+                class="text-slate-100 bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"
                 on_click=move |_| {
                     set_bink_id.update(|_| ());
                 }
