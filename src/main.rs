@@ -91,25 +91,25 @@ fn App() -> impl IntoView {
         <div class="max-w-screen-md mx-auto sm:my-8 px-8 pt-6 pb-8 bg-slate-50 dark:bg-slate-800 sm:shadow-xl rounded">
             <ul class="max-w-md mx-auto mb-8 font-medium text-center text-slate-500 rounded-lg shadow sm:flex dark:divide-slate-700 dark:text-slate-400">
                 <li class="w-full">
-                    <a href="" on:click=move |_| {
+                    <button on:click=move |_| {
                         select_tab(Tab::Generate);
                     } class={move || Tab::class(Tab::Generate, selected_tab.get())}>
                         "Generate"
-                    </a>
+                    </button>
                 </li>
                 <li class="w-full">
-                    <a href="" on:click=move |_| {
+                    <button on:click=move |_| {
                         select_tab(Tab::Validate);
                     } class={move || Tab::class(Tab::Validate, selected_tab.get())}>
                         "Validate"
-                    </a>
+                    </button>
                 </li>
                 <li class="w-full">
-                    <a href="" on:click=move |_| {
+                    <button on:click=move |_| {
                         select_tab(Tab::Activate);
                     } class={move || Tab::class(Tab::Activate, selected_tab.get())}>
                         "Activate"
-                    </a>
+                    </button>
                 </li>
             </ul>
             <div class="text-slate-800 dark:text-slate-200">
