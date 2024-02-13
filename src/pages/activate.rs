@@ -53,7 +53,7 @@ pub fn Activate() -> impl IntoView {
             />
         </div>
         <Label>"Confirmation ID"</Label>
-        <div class="overflow-scroll mb-8 mx-auto font-mono text-center text-2xl text-slate-800 rounded-lg p-6 bg-slate-200 dark:bg-slate-700 dark:text-slate-200">
+        <div class="overflow-scroll sm:overflow-clip mb-8 mx-auto font-mono text-center text-2xl text-slate-800 rounded-lg p-6 bg-slate-200 dark:bg-slate-700 dark:text-slate-200">
                 {confirmation_id}
         </div>
         <Button
