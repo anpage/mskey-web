@@ -91,3 +91,38 @@ where
         />
     }
 }
+
+#[component]
+pub fn CheckBox<F>(
+    label: &'static str,
+    id: &'static str,
+    on_change: F,
+    checked: ReadSignal<bool>,
+) -> impl IntoView
+where
+    F: Fn(Event) + 'static,
+{
+    view! {
+        <Label for_id=id>{label}</Label>
+        <label class="pt-2 inline-flex items-center cursor-pointer">
+            <input
+                type="checkbox"
+                name=id
+                id=id
+                class="mr-2 sr-only peer"
+                on:change=on_change
+                prop:checked=checked.get()
+            />
+            <div class="relative w-11 h-6 bg-gray-200
+            peer-focus:outline-none
+            peer-focus:ring-4
+            peer-focus:ring-indigo-300
+            dark:peer-focus:ring-indigo-500
+            rounded-full peer dark:bg-gray-700
+            peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full
+            peer-checked:after:border-white after:content-['']
+            after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all
+            dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+        </label>
+    }
+}

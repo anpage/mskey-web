@@ -6,7 +6,7 @@ use wasm_bindgen_futures::JsFuture;
 use crate::{
     components::{
         button::Button,
-        fields::{NumberField, SelectField},
+        fields::{CheckBox, NumberField, SelectField},
     },
     gen::KeyGen,
     icons::{CopyIcon, RefreshIcon},
@@ -18,6 +18,11 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
     let (product, set_product) = create_signal("Windows XP Pro VLK".to_string());
     let (bink_id, set_bink_id) = create_signal(0x2E_u8);
     let (channel_id, set_channel_id) = create_signal("640".to_string());
+    let (upgrade, set_upgrade) = create_signal(false);
+
+    let update_upgrade = move |ev| {
+        set_upgrade.set(event_target_checked(&ev));
+    };
 
     let update_channel_id = move |ev| {
         set_channel_id.set(event_target_value(&ev));
@@ -46,7 +51,7 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
     let key = create_memo(move |_| {
         let bink_id = bink_id.get();
         keygen_key_clone
-            .gen_key(bink_id, &channel_id.get())
+            .gen_key(bink_id, &channel_id.get(), upgrade.get())
             .unwrap_or_else(|_| "".to_string())
     });
 
@@ -105,6 +110,14 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                     max=999
                     channel_id=channel_id
                     on_change=update_channel_id
+                />
+            </div>
+            <div class="flex-2">
+                <CheckBox
+                    label="Upgrade"
+                    id="upgrade"
+                    checked=upgrade
+                    on_change=update_upgrade
                 />
             </div>
         </div>
