@@ -37,14 +37,13 @@ impl Tab {
     }
 }
 
-impl ToString for Tab {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for Tab {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Tab::Generate => "generate",
-            Tab::Validate => "validate",
-            Tab::Activate => "activate",
+            Tab::Generate => write!(f, "generate"),
+            Tab::Validate => write!(f, "validate"),
+            Tab::Activate => write!(f, "activate"),
         }
-        .to_string()
     }
 }
 
@@ -77,7 +76,7 @@ fn App() -> impl IntoView {
         }
         let url = web_sys::window().unwrap().location().href().unwrap();
         let url = Url::new(&url).unwrap();
-        url.set_search(&format!("?{}", tab.to_string()));
+        url.set_search(&format!("?{tab}"));
         let url = url.href();
         let _ = web_sys::window()
             .unwrap()
