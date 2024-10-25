@@ -13,4 +13,4 @@ serve:
     trunk serve --release --open
 
 deploy: clean build
-    surge .\dist\ https://mskt.surge.sh
+    surge ./dist/ https://mskt.surge.sh
