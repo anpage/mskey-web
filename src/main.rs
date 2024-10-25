@@ -63,7 +63,7 @@ impl From<UrlSearchParams> for Tab {
 #[component]
 fn App() -> impl IntoView {
     // Initialize the KeyGen struct into an Rc, which can be cheaply passed around to components.
-    let keygen = Rc::new(gen::KeyGen::new().unwrap());
+    let keygen = Rc::new(gen::KeyGen::new());
 
     let search = web_sys::window().unwrap().location().search().unwrap();
     let search = UrlSearchParams::new_with_str(&search).unwrap();

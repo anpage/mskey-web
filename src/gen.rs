@@ -51,14 +51,14 @@ impl Ord for Product {
 /// Provides methods for generating and validating product keys
 pub struct KeyGen {
     keys: Keys,
-    sorted_products: Vec<Product>,
+    products: Vec<Product>,
 }
 
 impl KeyGen {
     /// Initialize key crypto with the serialized key data in `bink.bin`
-    pub fn new() -> Result<Self> {
-        let keys = Self::load_keys()?;
-        let mut sorted_products: Vec<Product> = keys
+    pub fn new() -> Self {
+        let keys: Keys = bincode::deserialize(std::include_bytes!("../bink.bin")).unwrap();
+        let mut products: Vec<Product> = keys
             .products
             .iter()
             .map(|(name, product)| Product {
@@ -66,20 +66,12 @@ impl KeyGen {
                 bink_ids: product.bink.clone(),
             })
             .collect();
-        sorted_products.sort();
-        Ok(Self {
-            keys,
-            sorted_products,
-        })
-    }
-
-    fn load_keys() -> Result<Keys> {
-        let keys = bincode::deserialize(std::include_bytes!("../bink.bin"))?;
-        Ok(keys)
+        products.sort();
+        Self { keys, products }
     }
 
     pub fn sorted_products(&self) -> &[Product] {
-        &self.sorted_products
+        &self.products
     }
 
     pub fn gen_key(&self, bink_id: u8, channel_id: &str, upgrade: bool) -> Result<String> {
