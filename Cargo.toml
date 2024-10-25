@@ -10,6 +10,7 @@ members = ["bink_types"]
 anyhow = "1.0.91"
 bincode = "1.3.3"
 bink_types = { path = "bink_types" }
+console_error_panic_hook = "0.1.7"
 getrandom = { version = "0.2.10", features = ["js"] }
 leptos = { version = "0.6.15", features = ["csr"] }
 umskt = { git = "https://github.com/anpage/umskt-rs.git" }
