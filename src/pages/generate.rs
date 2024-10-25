@@ -12,7 +12,6 @@ use crate::{
     icons::{CopyIcon, RefreshIcon},
 };
 
-#[cfg(web_sys_unstable_apis)]
 #[component]
 pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
     let (product, set_product) = create_signal("Windows XP Pro VLK".to_string());
@@ -63,7 +62,6 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                     .unwrap()
                     .navigator()
                     .clipboard()
-                    .unwrap()
                     .write_text(&input),
             )
             .await

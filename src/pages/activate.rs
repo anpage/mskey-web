@@ -9,7 +9,6 @@ use crate::{
     icons::CopyIcon,
 };
 
-#[cfg(web_sys_unstable_apis)]
 #[component]
 pub fn Activate() -> impl IntoView {
     use wasm_bindgen_futures::JsFuture;
@@ -34,7 +33,6 @@ pub fn Activate() -> impl IntoView {
                     .unwrap()
                     .navigator()
                     .clipboard()
-                    .unwrap()
                     .write_text(&input),
             )
             .await
