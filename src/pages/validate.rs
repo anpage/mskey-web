@@ -1,6 +1,7 @@
 use leptos::*;
 use leptos_workers::worker;
-use web_sys::UrlSearchParams;
+use wasm_bindgen::JsValue;
+use web_sys::{Url, UrlSearchParams};
 
 use crate::{
     components::{
@@ -36,11 +37,34 @@ pub fn Validate() -> impl IntoView {
 
     let validation_response = create_local_resource(
         move || (product_key.get()),
-        |key| async {
+        |key| async move {
             if key.is_empty() {
                 Ok(ProductKey::Empty)
             } else {
-                validate_key(key).await
+                let product_key = validate_key(key.clone()).await;
+                if let Ok(ProductKey::Bink1998{..}) | Ok(ProductKey::Bink2002 {..}) = product_key {
+                    let url = web_sys::window().unwrap().location().href().unwrap();
+                    let url = Url::new(&url).unwrap();
+                    url.set_search(&format!("?validate&k={}", key.trim()));
+                    let url = url.href();
+                    let _ = web_sys::window()
+                        .unwrap()
+                        .history()
+                        .unwrap()
+                        .replace_state_with_url(&JsValue::NULL, "", Some(&url));
+                }
+                else {
+                    let url = web_sys::window().unwrap().location().href().unwrap();
+                    let url = Url::new(&url).unwrap();
+                    url.set_search("?validate");
+                    let url = url.href();
+                    let _ = web_sys::window()
+                        .unwrap()
+                        .history()
+                        .unwrap()
+                        .replace_state_with_url(&JsValue::NULL, "", Some(&url));
+                }
+                product_key
             }
         },
     );
@@ -56,7 +80,9 @@ pub fn Validate() -> impl IntoView {
             />
         </div>
 
-        <Suspense fallback=move || view! { <Loading /> }>
+        <Suspense fallback=move || {
+            view! { <Loading /> }
+        }>
             {move || match validation_response.get() {
                 Some(Ok(ProductKey::Empty)) | None => view! { <div></div> },
                 Some(Ok(ProductKey::Invalid)) => {
@@ -97,8 +123,9 @@ fn Loading() -> impl IntoView {
     view! {
         <div class="flex items-center justify-center pt-4">
             <div
-            class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]"
-            role="status">
+                class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+            >
                 <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
                     Loading...
                 </span>
