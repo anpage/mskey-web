@@ -8,12 +8,12 @@ use crate::{
         button::Button,
         fields::{CheckBox, NumberField, SelectField},
     },
-    gen::KeyGen,
+    crypto::KeyTool,
     icons::{CopyIcon, RefreshIcon},
 };
 
 #[component]
-pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
+pub fn Generate(keygen: Rc<KeyTool>) -> impl IntoView {
     let (product, set_product) = create_signal("Windows XP Pro VLK".to_string());
     let (bink_id, set_bink_id) = create_signal(0x2E_u8);
     let (channel_id, set_channel_id) = create_signal("640".to_string());
@@ -73,31 +73,41 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
     let keygen_view_clone_2 = keygen.clone();
     view! {
         <div class="mb-4">
-            <SelectField
-                label="Product"
-                id="product"
-                on_input=update_product
-            >
-                {keygen_view_clone_1.sorted_products().iter().map(|p| {
-                    view! {
-                        <option value={p.name.clone()} selected={p.name == product.get()}>{p.name.clone()}</option>
-                    }
-                }).collect::<Vec<_>>()}
+            <SelectField label="Product" id="product" on_input=update_product>
+                {keygen_view_clone_1
+                    .sorted_products()
+                    .iter()
+                    .map(|p| {
+                        view! {
+                            <option value=p.name.clone() selected=p.name == product.get()>
+                                {p.name.clone()}
+                            </option>
+                        }
+                    })
+                    .collect::<Vec<_>>()}
             </SelectField>
         </div>
         <div class="flex flex-col sm:flex-row gap-4 mb-6">
             <div class="flex-1">
-                <SelectField
-                    label="BINK ID"
-                    id="bink"
-                    on_input=update_bink_id
-                >
-                    {move || keygen_view_clone_2.sorted_products().iter().find(|p| p.name == product.get()).unwrap().bink_ids.iter().map(|b| {
-                        let b_str = format!("{:02X}", b);
-                        view! {
-                            <option value={b_str.clone()} selected={*b == bink_id.get()}>{b_str}</option>
-                        }
-                    }).collect::<Vec<_>>()}
+                <SelectField label="BINK ID" id="bink" on_input=update_bink_id>
+                    {move || {
+                        keygen_view_clone_2
+                            .sorted_products()
+                            .iter()
+                            .find(|p| p.name == product.get())
+                            .unwrap()
+                            .bink_ids
+                            .iter()
+                            .map(|b| {
+                                let b_str = format!("{:02X}", b);
+                                view! {
+                                    <option value=b_str.clone() selected=*b == bink_id.get()>
+                                        {b_str}
+                                    </option>
+                                }
+                            })
+                            .collect::<Vec<_>>()
+                    }}
                 </SelectField>
             </div>
             <div class="flex-1">
@@ -111,12 +121,7 @@ pub fn Generate(keygen: Rc<KeyGen>) -> impl IntoView {
                 />
             </div>
             <div class="flex-2">
-                <CheckBox
-                    label="Upgrade"
-                    id="upgrade"
-                    checked=upgrade
-                    on_change=update_upgrade
-                />
+                <CheckBox label="Upgrade" id="upgrade" checked=upgrade on_change=update_upgrade />
             </div>
         </div>
         <div class="mb-8 mx-auto font-mono text-center text-2xl text-slate-800 rounded-lg p-6 bg-slate-200 dark:bg-slate-700 dark:text-slate-200">

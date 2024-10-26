@@ -1,19 +1,24 @@
-use std::rc::Rc;
-
 use leptos::*;
-use wasm_bindgen::JsValue;
-use web_sys::{Url, UrlSearchParams};
+use leptos_workers::worker;
+use web_sys::UrlSearchParams;
 
 use crate::{
     components::{
         bink1998_details::Bink1998Details, bink2002_details::Bink2002Details, error::Error,
         fields::TextField,
     },
-    gen::{KeyGen, ProductKey},
+    crypto::{self, ProductKey},
 };
 
+#[worker]
+async fn validate_key(key: String) -> ProductKey {
+    let key_tool = crypto::KeyTool::new();
+    let product_key = key_tool.validate_key(&key);
+    product_key.unwrap_or(ProductKey::Invalid)
+}
+
 #[component]
-pub fn Validate(keygen: Rc<KeyGen>) -> impl IntoView {
+pub fn Validate() -> impl IntoView {
     let search = web_sys::window().unwrap().location().search().unwrap();
     let search = UrlSearchParams::new_with_str(&search).unwrap();
 
@@ -29,76 +34,75 @@ pub fn Validate(keygen: Rc<KeyGen>) -> impl IntoView {
         set_product_key.set(event_target_value(&ev));
     };
 
-    let validated_key = create_memo(move |_| {
-        let key = product_key.get();
-        let product_key = keygen.validate_key(&key);
-        if let Ok(product_key) = product_key {
-            let url = web_sys::window().unwrap().location().href().unwrap();
-            let url = Url::new(&url).unwrap();
-            if matches!(product_key, ProductKey::Invalid) {
-                url.set_search("?validate");
+    let validation_response = create_local_resource(
+        move || (product_key.get()),
+        |key| async {
+            if key.is_empty() {
+                Ok(ProductKey::Empty)
             } else {
-                url.set_search(&format!("?validate&k={}", key.trim()));
+                validate_key(key).await
             }
-            let url = url.href();
-            let _ = web_sys::window()
-                .unwrap()
-                .history()
-                .unwrap()
-                .replace_state_with_url(&JsValue::NULL, "", Some(&url));
-
-            product_key
-        } else {
-            let url = web_sys::window().unwrap().location().href().unwrap();
-            let url = Url::new(&url).unwrap();
-            url.set_search("?validate");
-            let url = url.href();
-            let _ = web_sys::window()
-                .unwrap()
-                .history()
-                .unwrap()
-                .replace_state_with_url(&JsValue::NULL, "", Some(&url));
-            ProductKey::Invalid
-        }
-    });
+        },
+    );
 
     view! {
         <div class="mb-4">
             <TextField
                 label="Product Key"
                 id="productkey"
-                on_change=update_product_key
-                on_input=|_| {}
+                on_change=|_| ()
+                on_input=update_product_key
                 value=product_key
             />
         </div>
-        {move || {
-            if product_key.get().is_empty() {
-                view! {
-                    <div>
-                    </div>
-                }
-            } else {
-                match validated_key.get() {
-                    ProductKey::Invalid => view! {
+
+        <Suspense fallback=move || view! { <Loading /> }>
+            {move || match validation_response.get() {
+                Some(Ok(ProductKey::Empty)) | None => view! { <div></div> },
+                Some(Ok(ProductKey::Invalid)) => {
+                    view! {
                         <div class="mt-6">
-                            <Error>
-                                "Invalid product key"
-                            </Error>
+                            <Error>"Invalid product key"</Error>
                         </div>
-                    },
-                    ProductKey::Bink1998{ key, bink_ids } => view! {
+                    }
+                }
+                Some(Ok(ProductKey::Bink1998 { key, bink_ids })) => {
+                    view! {
                         <div>
                             <Bink1998Details key=key bink_ids=bink_ids />
                         </div>
-                    },
-                    ProductKey::Bink2002{ key, bink_ids } => view! {
+                    }
+                }
+                Some(Ok(ProductKey::Bink2002 { key, bink_ids })) => {
+                    view! {
                         <div>
                             <Bink2002Details key=key bink_ids=bink_ids />
                         </div>
                     }
                 }
-            }
-        }}
+                Some(Err(_)) => {
+                    view! {
+                        <div class="mt-6">
+                            <Error>"Error validating key"</Error>
+                        </div>
+                    }
+                }
+            }}
+        </Suspense>
+    }
+}
+
+#[component]
+fn Loading() -> impl IntoView {
+    view! {
+        <div class="flex items-center justify-center pt-4">
+            <div
+            class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status">
+                <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                    Loading...
+                </span>
+            </div>
+        </div>
     }
 }

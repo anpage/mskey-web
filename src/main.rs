@@ -7,13 +7,17 @@ use web_sys::{Url, UrlSearchParams};
 use crate::pages::{activate::Activate, generate::Generate, validate::Validate};
 
 mod components;
-mod gen;
+mod crypto;
 mod icons;
 mod pages;
 
 fn main() {
     console_error_panic_hook::set_once();
-    mount_to_body(|| view! { <App /> })
+    if web_sys::window().is_some() {
+        mount_to_body(|| view! { <App /> })
+    } else {
+        // this is a worker, do nothing
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -63,7 +67,7 @@ impl From<UrlSearchParams> for Tab {
 #[component]
 fn App() -> impl IntoView {
     // Initialize the KeyGen struct into an Rc, which can be cheaply passed around to components.
-    let keygen = Rc::new(gen::KeyGen::new());
+    let keygen = Rc::new(crypto::KeyTool::new());
 
     let search = web_sys::window().unwrap().location().search().unwrap();
     let search = UrlSearchParams::new_with_str(&search).unwrap();
@@ -125,7 +129,7 @@ fn App() -> impl IntoView {
                 {move || {
                     match selected_tab.get() {
                         Tab::Generate => view! { <Generate keygen=keygen.clone() /> },
-                        Tab::Validate => view! { <Validate keygen=keygen.clone() /> },
+                        Tab::Validate => view! { <Validate /> },
                         Tab::Activate => view! { <Activate /> },
                     }
                 }}

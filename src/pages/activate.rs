@@ -5,7 +5,7 @@ use crate::{
         button::Button,
         fields::{Label, TextField},
     },
-    gen::KeyGen,
+    crypto::KeyTool,
     icons::CopyIcon,
 };
 
@@ -21,7 +21,7 @@ pub fn Activate() -> impl IntoView {
 
     let confirmation_id = create_memo(move |_| {
         let installation_id = installation_id.get();
-        KeyGen::get_confirmation_id(&installation_id)
+        KeyTool::get_confirmation_id(&installation_id)
             .unwrap_or_else(|_| "INVALID INSTALLATION ID".to_string())
     });
 

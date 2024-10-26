@@ -2,21 +2,65 @@ use std::collections::HashMap;
 
 use anyhow::{anyhow, bail, Result};
 use bink_types::bink::Keys;
+use serde::{Deserialize, Serialize};
 use umskt::{
     confid,
     crypto::{EllipticCurve, PrivateKey},
     pidgen3::{bink1998, bink2002},
 };
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProductKey1998 {
+    pub upgrade: bool,
+    pub channel_id: String,
+    pub sequence: String,
+    pub hash: String,
+    pub signature: String,
+}
+
+impl From<bink1998::ProductKey> for ProductKey1998 {
+    fn from(value: bink1998::ProductKey) -> Self {
+        ProductKey1998 {
+            upgrade: value.upgrade(),
+            channel_id: value.channel_id().to_string(),
+            sequence: value.sequence().to_string(),
+            hash: value.hash().to_string(),
+            signature: value.signature().to_string(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProductKey2002 {
+    pub upgrade: bool,
+    pub channel_id: String,
+    pub hash: String,
+    pub signature: String,
+    pub auth_info: String,
+}
+
+impl From<bink2002::ProductKey> for ProductKey2002 {
+    fn from(value: bink2002::ProductKey) -> Self {
+        ProductKey2002 {
+            upgrade: value.upgrade(),
+            channel_id: value.channel_id().to_string(),
+            hash: value.hash().to_string(),
+            signature: value.signature().to_string(),
+            auth_info: value.auth_info().to_string(),
+        }
+    }
+}
+
 /// Differentiate between the two types of product keys and an invalid key
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub enum ProductKey {
+    Empty,
     Bink1998 {
-        key: bink1998::ProductKey,
+        key: ProductKey1998,
         bink_ids: HashMap<String, u8>,
     },
     Bink2002 {
-        key: bink2002::ProductKey,
+        key: ProductKey2002,
         bink_ids: HashMap<String, u8>,
     },
     Invalid,
@@ -49,12 +93,12 @@ impl Ord for Product {
 }
 
 /// Provides methods for generating and validating product keys
-pub struct KeyGen {
+pub struct KeyTool {
     keys: Keys,
     products: Vec<Product>,
 }
 
-impl KeyGen {
+impl KeyTool {
     /// Initialize key crypto with the serialized key data in `bink.bin`
     pub fn new() -> Self {
         let keys: Keys = bincode::deserialize(std::include_bytes!("../bink.bin")).unwrap();
@@ -145,14 +189,14 @@ impl KeyGen {
 
         if let Some(product_key) = product_key_bink1998 {
             return Ok(ProductKey::Bink1998 {
-                key: product_key,
+                key: product_key.into(),
                 bink_ids: valid_bink_ids,
             });
         }
 
         if let Some(product_key) = product_key_bink2002 {
             return Ok(ProductKey::Bink2002 {
-                key: product_key,
+                key: product_key.into(),
                 bink_ids: valid_bink_ids,
             });
         }
