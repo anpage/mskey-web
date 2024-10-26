@@ -17,20 +17,25 @@ pub fn Generate(keygen: Rc<KeyTool>) -> impl IntoView {
     let (product, set_product) = create_signal("Windows XP Pro VLK".to_string());
     let (bink_id, set_bink_id) = create_signal(0x2E_u8);
     let (channel_id, set_channel_id) = create_signal("640".to_string());
+    let (sequence, set_sequence) = create_signal("".to_string());
     let (upgrade, set_upgrade) = create_signal(false);
 
     let update_upgrade = move |ev| {
         set_upgrade.set(event_target_checked(&ev));
     };
 
-    let update_channel_id = move |ev| {
-        set_channel_id.set(event_target_value(&ev));
-    };
-
     let update_bink_id = move |ev| {
         let bink_id = event_target_value(&ev);
         let bink_id = u8::from_str_radix(&bink_id, 16).unwrap();
         set_bink_id.set(bink_id);
+    };
+
+    let update_channel_id = move |ev| {
+        set_channel_id.set(event_target_value(&ev));
+    };
+
+    let update_sequence = move |ev| {
+        set_sequence.set(event_target_value(&ev));
     };
 
     let keygen_product_clone = keygen.clone();
@@ -50,7 +55,7 @@ pub fn Generate(keygen: Rc<KeyTool>) -> impl IntoView {
     let key = create_memo(move |_| {
         let bink_id = bink_id.get();
         keygen_key_clone
-            .gen_key(bink_id, &channel_id.get(), upgrade.get())
+            .gen_key(bink_id, &channel_id.get(), &sequence.get(), upgrade.get())
             .unwrap_or_else(|_| "".to_string())
     });
 
@@ -116,8 +121,20 @@ pub fn Generate(keygen: Rc<KeyTool>) -> impl IntoView {
                     id="channel"
                     min=0
                     max=999
-                    channel_id=channel_id
-                    on_change=update_channel_id
+                    value=channel_id
+                    on_input=update_channel_id
+                    placeholder="3 digits"
+                />
+            </div>
+            <div class="flex-1">
+                <NumberField
+                    label="Sequence"
+                    id="sequence"
+                    min=0
+                    max=999999
+                    value=sequence
+                    on_input=update_sequence
+                    placeholder="Random"
                 />
             </div>
             <div class="flex-2">

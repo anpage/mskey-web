@@ -7,10 +7,7 @@ const INPUT_CLASSES: &str =
 #[component]
 pub fn Label(#[prop(optional)] for_id: &'static str, children: Children) -> impl IntoView {
     view! {
-        <label
-            class="block font-bold mb-2 text-lg"
-            for=for_id
-        >
+        <label class="block font-bold mb-2 text-lg" for=for_id>
             {children()}
         </label>
     }
@@ -28,12 +25,7 @@ where
 {
     view! {
         <Label for_id=id>{label}</Label>
-        <select
-            name=id
-            id=id
-            class=format!("{INPUT_CLASSES} cursor-pointer")
-            on:input=on_input
-        >
+        <select name=id id=id class=format!("{INPUT_CLASSES} cursor-pointer") on:input=on_input>
             {children()}
         </select>
     }
@@ -45,8 +37,9 @@ pub fn NumberField<F>(
     id: &'static str,
     min: u32,
     max: u32,
-    channel_id: ReadSignal<String>,
-    on_change: F,
+    value: ReadSignal<String>,
+    on_input: F,
+    placeholder: &'static str,
 ) -> impl IntoView
 where
     F: Fn(Event) + 'static,
@@ -60,8 +53,9 @@ where
             name=id
             id=id
             class=format!("{INPUT_CLASSES} no-spinner")
-            on:change=on_change
-            prop:value=channel_id.get()
+            on:input=on_input
+            prop:value=value.get()
+            placeholder=placeholder
         />
     }
 }

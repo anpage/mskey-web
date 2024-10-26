@@ -118,12 +118,28 @@ impl KeyTool {
         &self.products
     }
 
-    pub fn gen_key(&self, bink_id: u8, channel_id: &str, upgrade: bool) -> Result<String> {
+    pub fn gen_key(
+        &self,
+        bink_id: u8,
+        channel_id: &str,
+        sequence: &str,
+        upgrade: bool,
+    ) -> Result<String> {
         let channel_id = channel_id.parse::<u32>()?;
 
         if channel_id > 999 {
             bail!("Channel ID must be 3 digits or fewer");
         }
+
+        let sequence = if sequence.is_empty() {
+            None
+        } else {
+            let sequence = sequence.parse::<u32>()?;
+            if sequence > 999999 {
+                bail!("Sequence must be 6 digits or fewer");
+            }
+            Some(sequence)
+        };
 
         let bink = self
             .keys
@@ -142,10 +158,14 @@ impl KeyTool {
         let private_key = PrivateKey::new(bink.n.clone(), bink.private.clone());
 
         if bink_id < 0x40 {
-            Ok(
-                bink1998::ProductKey::new(&curve, &private_key, channel_id, None, Some(upgrade))?
-                    .to_string(),
-            )
+            Ok(bink1998::ProductKey::new(
+                &curve,
+                &private_key,
+                channel_id,
+                sequence,
+                Some(upgrade),
+            )?
+            .to_string())
         } else {
             Ok(
                 bink2002::ProductKey::new(&curve, &private_key, channel_id, None, Some(upgrade))?
